@@ -3,25 +3,19 @@ const fsPromises = require("fs").promises;
 const path = require("path");
 const templateUtils = require("../../../lib/utils/templateUtils");
 const { ReconciliationText } = require("../../../lib/templates/reconciliationText");
+const {
+  REC_SAVE_INPUT,
+  DISK_CONFIG_PRE_MERGE,
+  DISK_CONFIG_FOR_READ,
+} = require("../../fixtures/reconciliation_texts");
 
 jest.mock("../../../lib/utils/templateUtils");
 jest.mock("consola");
 
 describe("ReconciliationText", () => {
   describe("save", () => {
-    const testContent = "Test content as string";
+    const template = REC_SAVE_INPUT;
     const textParts = { part_1: "Part 1: updated content" };
-    const template = {
-      handle: "example_handle",
-      id: 808080,
-      text: "Main liquid content",
-      text_parts: [
-        { name: "part_1", content: "Part 1: updated content" },
-        { name: "", content: "" },
-      ],
-      tests: testContent,
-      externally_managed: true,
-    };
     const handle = template.handle;
     const configToWrite = {
       id: {
@@ -52,33 +46,7 @@ describe("ReconciliationText", () => {
       virtual_account_number: "",
       test_firm_id: null,
     };
-    const existingConfig = {
-      id: { 200: 505050 },
-      handle: "old_handle",
-      text: "main.liquid",
-      text_parts: {
-        old_part: "text_parts/old_part.liquid",
-        part_1: "text_parts/part_1.liquid",
-      },
-      externally_managed: false,
-      auto_hide_formula: "",
-      downloadable_as_docx: false,
-      hide_code: true,
-      is_active: true,
-      name_nl: "example_handle",
-      name_fr: "",
-      name_en: "",
-      name_de: "",
-      name_da: "",
-      name_se: "",
-      name_fi: "",
-      public: false,
-      published: true,
-      reconciliation_type: "only_reconciled_with_data",
-      use_full_width: true,
-      virtual_account_number: "",
-      test_firm_id: null,
-    };
+    const existingConfig = DISK_CONFIG_PRE_MERGE;
 
     const repoRoot = path.resolve(__dirname, "../../..");
     let tempDir;
@@ -358,23 +326,7 @@ describe("ReconciliationText", () => {
     const testLiquidPath = path.join(templateDir, "tests", `${handle}_liquid_test.yml`);
     const part1LiquidPath = path.join(templateDir, "text_parts", "part_1.liquid");
 
-    const configContent = {
-      id: { 100: 808080 },
-      handle: "example_handle",
-      name_en: "Example Handle",
-      name_nl: "Voorbeeld Handle",
-      name_fr: "Exemple",
-      name_de: "Beispiel Handle",
-      name_da: "Eksempel Handle",
-      name_se: "Exempel Handle",
-      name_fi: "Esimerkki Handle",
-      reconciliation_type: "can_be_reconciled_without_data",
-      text: "main.liquid",
-      text_parts: {
-        part_1: "text_parts/part_1.liquid",
-      },
-      externally_managed: true,
-    };
+    const configContent = DISK_CONFIG_FOR_READ;
 
     beforeEach(() => {
       if (!fs.existsSync(tempDir)) {

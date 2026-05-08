@@ -56,6 +56,25 @@ const AT_MULTI_LOCALE = {
   name_fr: "test_account_template",
 };
 
+// ─── Minimal API inputs for AccountTemplate unit tests ───────────────────────
+
+/** Minimal API response used as input to AccountTemplate.save() unit tests. */
+const AT_SAVE_INPUT = {
+  name_nl: "name_nl",
+  name_en: "",
+  name_fr: "",
+  id: 808080,
+  text: "Main liquid content",
+  text_parts: [
+    { name: "part_1", content: "Part 1: updated content" },
+    { name: "", content: "" },
+  ],
+  tests: "# Add your Liquid Tests here",
+  externally_managed: true,
+  hide_code: true,
+  mapping_list_ranges: [],
+};
+
 // ─── Disk config objects ──────────────────────────────────────────────────────
 
 /** Baseline disk config after a firm-100 import. */
@@ -97,6 +116,39 @@ const DISK_CONFIG_EXISTING = {
   test_firm_id: null,
 };
 
+/** Existing config on disk before a second save (merge scenario unit test). */
+const DISK_CONFIG_PRE_MERGE = {
+  id: { 200: 505050 },
+  name_nl: "old_name_nl",
+  text: "main.liquid",
+  text_parts: {
+    old_part: "text_parts/old_part.liquid",
+    part_1: "text_parts/part_1.liquid",
+  },
+  name_fr: "",
+  name_en: "",
+  account_range: null,
+  mapping_list_ranges: [],
+  hide_code: false,
+  published: true,
+  test_firm_id: null,
+};
+
+/** Config written to disk — starting state for AccountTemplate.read() unit tests. */
+const DISK_CONFIG_FOR_READ = {
+  id: { 100: 808080 },
+  name_en: "test_account_template",
+  name_nl: "test_account_template",
+  name_fr: "test_account_template",
+  text: "main.liquid",
+  text_parts: { part_1: "text_parts/part_1.liquid" },
+  externally_managed: true,
+  account_range: null,
+  mapping_list_ranges: [],
+  hide_code: true,
+  published: true,
+};
+
 /** Config with all locale fields — tests locale preservation on read. */
 const DISK_CONFIG_MULTI_LOCALE = {
   ...DISK_CONFIG_BASE,
@@ -117,13 +169,20 @@ function makeDiskConfig(overrides = {}) {
 }
 
 module.exports = {
+  // Full API response objects
   AT_BASE,
   AT_EXTERNALLY_MANAGED,
   AT_WITH_MAPPING_LIST_RANGES,
   AT_MULTI_LOCALE,
+  // Minimal unit-test inputs
+  AT_SAVE_INPUT,
+  // Disk config objects
   DISK_CONFIG_BASE,
   DISK_CONFIG_EXISTING,
   DISK_CONFIG_MULTI_LOCALE,
+  DISK_CONFIG_PRE_MERGE,
+  DISK_CONFIG_FOR_READ,
+  // Factories
   makeAccountTemplate,
   makeDiskConfig,
 };

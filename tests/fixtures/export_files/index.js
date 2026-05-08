@@ -52,6 +52,20 @@ const EF_WITH_TEXT_PARTS = {
   file_name: "multi_part.sxbrl",
 };
 
+// ─── Minimal API inputs for ExportFile unit tests ────────────────────────────
+
+/** Minimal API response used as input to ExportFile.save() unit tests. */
+const EF_SAVE_INPUT = {
+  name_nl: "example_name_nl",
+  id: 808080,
+  text: "Main liquid content",
+  text_parts: [{ name: "part_1", content: "Part 1: updated content" }],
+  externally_managed: true,
+  file_name: "export_file.sxbrl",
+  name_en: "example_name_nl",
+  name_fr: "example_name_nl",
+};
+
 // ─── Disk config objects ──────────────────────────────────────────────────────
 
 /** Baseline disk config after a firm-100 import. */
@@ -111,6 +125,7 @@ module.exports = {
   EF_BASE,
   EF_EXTERNALLY_MANAGED,
   EF_WITH_TEXT_PARTS,
+  EF_SAVE_INPUT,
   DISK_CONFIG_BASE,
   DISK_CONFIG_EXISTING,
   makeExportFile,

@@ -95,6 +95,23 @@ const REC_DOWNLOADABLE_DOCX = {
   downloadable_as_docx: true,
 };
 
+// ─── Minimal API inputs for ReconciliationText unit tests ────────────────────
+// These are deliberately sparse — ReconciliationText.save() fills in defaults
+// from its own logic. Using a full object would produce different disk output.
+
+/** Minimal API response used as input to ReconciliationText.save() unit tests. */
+const REC_SAVE_INPUT = {
+  handle: "example_handle",
+  id: 808080,
+  text: "Main liquid content",
+  text_parts: [
+    { name: "part_1", content: "Part 1: updated content" },
+    { name: "", content: "" },
+  ],
+  tests: "Test content as string",
+  externally_managed: true,
+};
+
 // ─── Disk config objects (shape of config.json on disk) ───────────────────────
 
 /** Baseline disk config produced by a single firm-100 import. */
@@ -174,6 +191,55 @@ const DISK_CONFIG_PARTNER = {
   externally_managed: true,
 };
 
+/**
+ * Config already on disk for firm 200 before a second save for firm 100.
+ * Used in the merge-scenario unit test in reconciliationTexts.test.js.
+ */
+const DISK_CONFIG_PRE_MERGE = {
+  id: { 200: 505050 },
+  handle: "old_handle",
+  text: "main.liquid",
+  text_parts: {
+    old_part: "text_parts/old_part.liquid",
+    part_1: "text_parts/part_1.liquid",
+  },
+  externally_managed: false,
+  auto_hide_formula: "",
+  downloadable_as_docx: false,
+  hide_code: true,
+  is_active: true,
+  name_nl: "example_handle",
+  name_fr: "",
+  name_en: "",
+  name_de: "",
+  name_da: "",
+  name_se: "",
+  name_fi: "",
+  public: false,
+  published: true,
+  reconciliation_type: "only_reconciled_with_data",
+  use_full_width: true,
+  virtual_account_number: "",
+  test_firm_id: null,
+};
+
+/** Config written to disk — used as the starting state for read() unit tests. */
+const DISK_CONFIG_FOR_READ = {
+  id: { 100: 808080 },
+  handle: "example_handle",
+  name_en: "Example Handle",
+  name_nl: "Voorbeeld Handle",
+  name_fr: "Exemple",
+  name_de: "Beispiel Handle",
+  name_da: "Eksempel Handle",
+  name_se: "Exempel Handle",
+  name_fi: "Esimerkki Handle",
+  reconciliation_type: "can_be_reconciled_without_data",
+  text: "main.liquid",
+  text_parts: { part_1: "text_parts/part_1.liquid" },
+  externally_managed: true,
+};
+
 /** Config ready for publishReconciliationByHandle — includes text + text_parts paths. */
 const DISK_CONFIG_FOR_PUBLISH = {
   id: { 1001: 555 },
@@ -197,16 +263,23 @@ function makeDiskConfig(overrides = {}) {
 }
 
 module.exports = {
+  // Full API response objects
   REC_BASE,
   REC_EXTERNALLY_MANAGED,
   REC_WITH_TEXT_PARTS,
   REC_MULTI_LOCALE,
   REC_PARTNER,
   REC_DOWNLOADABLE_DOCX,
+  // Minimal unit-test inputs
+  REC_SAVE_INPUT,
+  // Disk config objects
   DISK_CONFIG_BASE,
   DISK_CONFIG_EXISTING,
   DISK_CONFIG_PARTNER,
   DISK_CONFIG_FOR_PUBLISH,
+  DISK_CONFIG_PRE_MERGE,
+  DISK_CONFIG_FOR_READ,
+  // Factories
   makeReconciliation,
   makeDiskConfig,
 };
