@@ -5,7 +5,7 @@ const templateUtils = require("../../../lib/utils/templateUtils");
 const { ReconciliationText } = require("../../../lib/templates/reconciliationText");
 const {
   REC_SAVE_INPUT,
-  DISK_CONFIG_PRE_MERGE,
+  DISK_CONFIG_BEFORE_MERGE,
   DISK_CONFIG_FOR_READ,
 } = require("../../fixtures/reconciliation_texts");
 
@@ -46,7 +46,7 @@ describe("ReconciliationText", () => {
       virtual_account_number: "",
       test_firm_id: null,
     };
-    const existingConfig = DISK_CONFIG_PRE_MERGE;
+    const existingConfig = DISK_CONFIG_BEFORE_MERGE;
 
     const repoRoot = path.resolve(__dirname, "../../..");
     let tempDir;

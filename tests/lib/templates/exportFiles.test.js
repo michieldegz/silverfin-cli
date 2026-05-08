@@ -5,7 +5,7 @@ const templateUtils = require("../../../lib/utils/templateUtils");
 const { ExportFile } = require("../../../lib/templates/exportFile");
 const {
   EF_SAVE_INPUT,
-  DISK_CONFIG_EXISTING,
+  DISK_CONFIG_BEFORE_MERGE,
 } = require("../../fixtures/export_files");
 
 jest.mock("../../../lib/utils/templateUtils");
@@ -37,7 +37,7 @@ describe("ExportFile", () => {
         part_1: "text_parts/part_1.liquid",
       },
     };
-    const existingConfig = DISK_CONFIG_EXISTING;
+    const existingConfig = DISK_CONFIG_BEFORE_MERGE;
 
     const repoRoot = path.resolve(__dirname, "../../..");
     let tempDir;

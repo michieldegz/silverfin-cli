@@ -8,7 +8,7 @@
 // ─── API response objects ─────────────────────────────────────────────────────
 
 /** Minimal valid shared part — happy-path baseline. */
-const SP_BASE = {
+const SP_MINIMAL = {
   id: 808080,
   name: "example_shared_part_name",
   text: "Shared part liquid content",
@@ -18,7 +18,7 @@ const SP_BASE = {
 
 /** Externally managed — used for stats and lock-down scenarios. */
 const SP_EXTERNALLY_MANAGED = {
-  ...SP_BASE,
+  ...SP_MINIMAL,
   id: 11111,
   name: "ext_managed_shared",
   externally_managed: true,
@@ -26,7 +26,7 @@ const SP_EXTERNALLY_MANAGED = {
 
 /** Shared part stored under a partner environment. */
 const SP_PARTNER = {
-  ...SP_BASE,
+  ...SP_MINIMAL,
   id: 99999,
   name: "partner_shared",
   externally_managed: false,
@@ -34,7 +34,7 @@ const SP_PARTNER = {
 
 /** Shared part that references a reconciliation via used_in. */
 const SP_WITH_USED_IN = {
-  ...SP_BASE,
+  ...SP_MINIMAL,
   id: 80808,
   name: "shared_used",
   used_in: [{ id: { 100: 5 }, type: "reconciliationText" }],
@@ -43,7 +43,7 @@ const SP_WITH_USED_IN = {
 // ─── Disk config objects ──────────────────────────────────────────────────────
 
 /** Baseline disk config after a firm-100 import. */
-const DISK_CONFIG_BASE = {
+const DISK_CONFIG_AFTER_IMPORT = {
   id: { 100: 808080 },
   partner_id: {},
   name: "example_shared_part_name",
@@ -63,7 +63,7 @@ const DISK_CONFIG_PARTNER = {
 };
 
 /** Config already on disk for firm 100 — merge scenario (firm 200 is added). */
-const DISK_CONFIG_EXISTING = {
+const DISK_CONFIG_BEFORE_MERGE = {
   id: { 100: 111 },
   partner_id: {},
   name: "shared_merge",
@@ -95,21 +95,21 @@ const DISK_CONFIG_FOR_UPDATE_ID = {
 // ─── Factory ──────────────────────────────────────────────────────────────────
 
 function makeSharedPart(overrides = {}) {
-  return { ...SP_BASE, ...overrides };
+  return { ...SP_MINIMAL, ...overrides };
 }
 
 function makeDiskConfig(overrides = {}) {
-  return { ...DISK_CONFIG_BASE, ...overrides };
+  return { ...DISK_CONFIG_AFTER_IMPORT, ...overrides };
 }
 
 module.exports = {
-  SP_BASE,
+  SP_MINIMAL,
   SP_EXTERNALLY_MANAGED,
   SP_PARTNER,
   SP_WITH_USED_IN,
-  DISK_CONFIG_BASE,
+  DISK_CONFIG_AFTER_IMPORT,
   DISK_CONFIG_PARTNER,
-  DISK_CONFIG_EXISTING,
+  DISK_CONFIG_BEFORE_MERGE,
   DISK_CONFIG_LEGACY_USED_IN,
   DISK_CONFIG_FOR_UPDATE_ID,
   makeSharedPart,

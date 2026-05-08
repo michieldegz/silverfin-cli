@@ -6,14 +6,14 @@
  * gets written to config.json on disk.
  *
  * Factory:
- *   makeReconciliation(overrides)  — merge overrides into REC_BASE
- *   makeDiskConfig(overrides)      — merge overrides into DISK_CONFIG_BASE
+ *   makeReconciliation(overrides)  — merge overrides into REC_MINIMAL
+ *   makeDiskConfig(overrides)      — merge overrides into DISK_CONFIG_AFTER_IMPORT
  */
 
 // ─── API response objects (shape returned by sfApi) ───────────────────────────
 
 /** Minimal valid reconciliation — happy-path baseline. */
-const REC_BASE = {
+const REC_MINIMAL = {
   id: 12345,
   handle: "example_handle",
   text: "Main liquid content",
@@ -44,7 +44,7 @@ const REC_BASE = {
 
 /** Externally managed — used for stats percentage and lock-down tests. */
 const REC_EXTERNALLY_MANAGED = {
-  ...REC_BASE,
+  ...REC_MINIMAL,
   id: 11111,
   handle: "ext_managed_rec",
   externally_managed: true,
@@ -53,7 +53,7 @@ const REC_EXTERNALLY_MANAGED = {
 
 /** Multiple text parts — tests part merging and file creation. */
 const REC_WITH_TEXT_PARTS = {
-  ...REC_BASE,
+  ...REC_MINIMAL,
   id: 22222,
   handle: "rec_with_parts",
   text_parts: [
@@ -65,7 +65,7 @@ const REC_WITH_TEXT_PARTS = {
 
 /** All locale fields populated — tests locale preservation on re-import. */
 const REC_MULTI_LOCALE = {
-  ...REC_BASE,
+  ...REC_MINIMAL,
   id: 33333,
   handle: "multi_locale_rec",
   name_en: "Custom English Name",
@@ -79,7 +79,7 @@ const REC_MULTI_LOCALE = {
 
 /** Reconciliation returned for partner context (no direct firm id). */
 const REC_PARTNER = {
-  ...REC_BASE,
+  ...REC_MINIMAL,
   id: 44444,
   handle: "partner_rec",
   externally_managed: true,
@@ -88,7 +88,7 @@ const REC_PARTNER = {
 
 /** Reconciliation with downloadable_as_docx set — only valid for externally managed. */
 const REC_DOWNLOADABLE_DOCX = {
-  ...REC_BASE,
+  ...REC_MINIMAL,
   id: 55555,
   handle: "docx_rec",
   externally_managed: true,
@@ -115,7 +115,7 @@ const REC_SAVE_INPUT = {
 // ─── Disk config objects (shape of config.json on disk) ───────────────────────
 
 /** Baseline disk config produced by a single firm-100 import. */
-const DISK_CONFIG_BASE = {
+const DISK_CONFIG_AFTER_IMPORT = {
   id: { 100: 12345 },
   partner_id: {},
   handle: "example_handle",
@@ -146,7 +146,7 @@ const DISK_CONFIG_BASE = {
 };
 
 /** Config already on disk from a previous import by firm 200 — merge scenario. */
-const DISK_CONFIG_EXISTING = {
+const DISK_CONFIG_PRIOR_IMPORT = {
   id: { 200: 50505 },
   partner_id: {},
   handle: "example_handle",
@@ -195,7 +195,7 @@ const DISK_CONFIG_PARTNER = {
  * Config already on disk for firm 200 before a second save for firm 100.
  * Used in the merge-scenario unit test in reconciliationTexts.test.js.
  */
-const DISK_CONFIG_PRE_MERGE = {
+const DISK_CONFIG_BEFORE_MERGE = {
   id: { 200: 505050 },
   handle: "old_handle",
   text: "main.liquid",
@@ -255,16 +255,16 @@ const DISK_CONFIG_FOR_PUBLISH = {
 // ─── Factory ──────────────────────────────────────────────────────────────────
 
 function makeReconciliation(overrides = {}) {
-  return { ...REC_BASE, ...overrides };
+  return { ...REC_MINIMAL, ...overrides };
 }
 
 function makeDiskConfig(overrides = {}) {
-  return { ...DISK_CONFIG_BASE, ...overrides };
+  return { ...DISK_CONFIG_AFTER_IMPORT, ...overrides };
 }
 
 module.exports = {
   // Full API response objects
-  REC_BASE,
+  REC_MINIMAL,
   REC_EXTERNALLY_MANAGED,
   REC_WITH_TEXT_PARTS,
   REC_MULTI_LOCALE,
@@ -273,11 +273,11 @@ module.exports = {
   // Minimal unit-test inputs
   REC_SAVE_INPUT,
   // Disk config objects
-  DISK_CONFIG_BASE,
-  DISK_CONFIG_EXISTING,
+  DISK_CONFIG_AFTER_IMPORT,
+  DISK_CONFIG_PRIOR_IMPORT,
   DISK_CONFIG_PARTNER,
   DISK_CONFIG_FOR_PUBLISH,
-  DISK_CONFIG_PRE_MERGE,
+  DISK_CONFIG_BEFORE_MERGE,
   DISK_CONFIG_FOR_READ,
   // Factories
   makeReconciliation,

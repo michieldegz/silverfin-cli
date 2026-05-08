@@ -5,7 +5,7 @@ const templateUtils = require("../../../lib/utils/templateUtils");
 const { AccountTemplate } = require("../../../lib/templates/accountTemplate");
 const {
   AT_SAVE_INPUT,
-  DISK_CONFIG_PRE_MERGE,
+  DISK_CONFIG_BEFORE_MERGE,
   DISK_CONFIG_FOR_READ,
 } = require("../../fixtures/account_templates");
 
@@ -40,7 +40,7 @@ describe("AccountTemplate", () => {
       published: true,
       test_firm_id: null,
     };
-    const existingConfig = DISK_CONFIG_PRE_MERGE;
+    const existingConfig = DISK_CONFIG_BEFORE_MERGE;
 
     const repoRoot = path.resolve(__dirname, "../../..");
     let tempDir;

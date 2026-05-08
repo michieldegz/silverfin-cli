@@ -6,7 +6,7 @@ const { SharedPart } = require("../../../lib/templates/sharedPart");
 const {
   SP_PARTNER,
   SP_WITH_USED_IN,
-  DISK_CONFIG_EXISTING,
+  DISK_CONFIG_BEFORE_MERGE,
   DISK_CONFIG_LEGACY_USED_IN,
   DISK_CONFIG_FOR_UPDATE_ID,
 } = require("../../fixtures/shared_parts");
@@ -189,17 +189,17 @@ describe("SharedPart", () => {
     });
 
     it("should merge with existing config when file already exists", async () => {
-      // Pre-create a config for firm 100 using the DISK_CONFIG_EXISTING fixture
-      const name = DISK_CONFIG_EXISTING.name;
+      // Pre-create a config for firm 100 using the DISK_CONFIG_BEFORE_MERGE fixture
+      const name = DISK_CONFIG_BEFORE_MERGE.name;
       const folder = path.join(tempDir, "shared_parts", name);
       fs.mkdirSync(folder, { recursive: true });
-      fs.writeFileSync(path.join(folder, "config.json"), JSON.stringify(DISK_CONFIG_EXISTING));
+      fs.writeFileSync(path.join(folder, "config.json"), JSON.stringify(DISK_CONFIG_BEFORE_MERGE));
 
       const template = { id: 222, name, text: "new code", used_in: [], externally_managed: false };
       await SharedPart.save("firm", 200, template);
 
       const saved = JSON.parse(fs.readFileSync(path.join(folder, "config.json"), "utf-8"));
-      expect(saved.id).toEqual({ ...DISK_CONFIG_EXISTING.id, 200: 222 });
+      expect(saved.id).toEqual({ ...DISK_CONFIG_BEFORE_MERGE.id, 200: 222 });
     });
 
     it("should write used_in entries after resolving handles via sfApi", async () => {

@@ -8,7 +8,7 @@
 // ─── API response objects ─────────────────────────────────────────────────────
 
 /** Minimal valid account template — happy-path baseline. */
-const AT_BASE = {
+const AT_MINIMAL = {
   id: 808080,
   name_nl: "name_nl",
   name_en: "",
@@ -29,7 +29,7 @@ const AT_BASE = {
 
 /** Externally managed account template. */
 const AT_EXTERNALLY_MANAGED = {
-  ...AT_BASE,
+  ...AT_MINIMAL,
   id: 11111,
   name_nl: "ext_managed_account",
   externally_managed: true,
@@ -38,7 +38,7 @@ const AT_EXTERNALLY_MANAGED = {
 
 /** Template with mapping_list_ranges for both firm and partner contexts. */
 const AT_WITH_MAPPING_LIST_RANGES = {
-  ...AT_BASE,
+  ...AT_MINIMAL,
   id: 33333,
   name_nl: "mapped_account",
   mapping_list_ranges: [
@@ -49,7 +49,7 @@ const AT_WITH_MAPPING_LIST_RANGES = {
 
 /** All locale fields populated — tests locale preservation on re-import. */
 const AT_MULTI_LOCALE = {
-  ...AT_BASE,
+  ...AT_MINIMAL,
   id: 44444,
   name_nl: "multi_locale_account",
   name_en: "test_account_template",
@@ -78,7 +78,7 @@ const AT_SAVE_INPUT = {
 // ─── Disk config objects ──────────────────────────────────────────────────────
 
 /** Baseline disk config after a firm-100 import. */
-const DISK_CONFIG_BASE = {
+const DISK_CONFIG_AFTER_IMPORT = {
   id: { 100: 808080 },
   partner_id: {},
   externally_managed: false,
@@ -99,7 +99,7 @@ const DISK_CONFIG_BASE = {
 };
 
 /** Config already on disk for firm 200 — merge scenario. */
-const DISK_CONFIG_EXISTING = {
+const DISK_CONFIG_PRIOR_IMPORT = {
   id: { 200: 505050 },
   name_nl: "old_name_nl",
   text: "main.liquid",
@@ -117,7 +117,7 @@ const DISK_CONFIG_EXISTING = {
 };
 
 /** Existing config on disk before a second save (merge scenario unit test). */
-const DISK_CONFIG_PRE_MERGE = {
+const DISK_CONFIG_BEFORE_MERGE = {
   id: { 200: 505050 },
   name_nl: "old_name_nl",
   text: "main.liquid",
@@ -151,7 +151,7 @@ const DISK_CONFIG_FOR_READ = {
 
 /** Config with all locale fields — tests locale preservation on read. */
 const DISK_CONFIG_MULTI_LOCALE = {
-  ...DISK_CONFIG_BASE,
+  ...DISK_CONFIG_AFTER_IMPORT,
   id: { 100: 44444 },
   name_nl: "multi_locale_account",
   name_en: "test_account_template",
@@ -161,26 +161,26 @@ const DISK_CONFIG_MULTI_LOCALE = {
 // ─── Factory ──────────────────────────────────────────────────────────────────
 
 function makeAccountTemplate(overrides = {}) {
-  return { ...AT_BASE, ...overrides };
+  return { ...AT_MINIMAL, ...overrides };
 }
 
 function makeDiskConfig(overrides = {}) {
-  return { ...DISK_CONFIG_BASE, ...overrides };
+  return { ...DISK_CONFIG_AFTER_IMPORT, ...overrides };
 }
 
 module.exports = {
   // Full API response objects
-  AT_BASE,
+  AT_MINIMAL,
   AT_EXTERNALLY_MANAGED,
   AT_WITH_MAPPING_LIST_RANGES,
   AT_MULTI_LOCALE,
   // Minimal unit-test inputs
   AT_SAVE_INPUT,
   // Disk config objects
-  DISK_CONFIG_BASE,
-  DISK_CONFIG_EXISTING,
+  DISK_CONFIG_AFTER_IMPORT,
+  DISK_CONFIG_PRIOR_IMPORT,
   DISK_CONFIG_MULTI_LOCALE,
-  DISK_CONFIG_PRE_MERGE,
+  DISK_CONFIG_BEFORE_MERGE,
   DISK_CONFIG_FOR_READ,
   // Factories
   makeAccountTemplate,

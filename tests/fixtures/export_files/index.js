@@ -8,7 +8,7 @@
 // ─── API response objects ─────────────────────────────────────────────────────
 
 /** Minimal valid export file — happy-path baseline. */
-const EF_BASE = {
+const EF_MINIMAL = {
   id: 808080,
   name_nl: "example_name_nl",
   name_en: "example_name_en",
@@ -28,7 +28,7 @@ const EF_BASE = {
 
 /** Externally managed export file. */
 const EF_EXTERNALLY_MANAGED = {
-  ...EF_BASE,
+  ...EF_MINIMAL,
   id: 11111,
   name_nl: "ext_managed_export",
   name_en: "ext_managed_export",
@@ -40,7 +40,7 @@ const EF_EXTERNALLY_MANAGED = {
 
 /** Export file with multiple text parts. */
 const EF_WITH_TEXT_PARTS = {
-  ...EF_BASE,
+  ...EF_MINIMAL,
   id: 22222,
   name_nl: "multi_part_export",
   name_en: "multi_part_export",
@@ -69,7 +69,7 @@ const EF_SAVE_INPUT = {
 // ─── Disk config objects ──────────────────────────────────────────────────────
 
 /** Baseline disk config after a firm-100 import. */
-const DISK_CONFIG_BASE = {
+const DISK_CONFIG_AFTER_IMPORT = {
   id: { 100: 808080 },
   partner_id: {},
   externally_managed: false,
@@ -89,7 +89,7 @@ const DISK_CONFIG_BASE = {
 };
 
 /** Config already on disk for firm 200 — merge scenario. */
-const DISK_CONFIG_EXISTING = {
+const DISK_CONFIG_BEFORE_MERGE = {
   id: { 200: 505050 },
   partner_id: {},
   externally_managed: false,
@@ -114,20 +114,20 @@ const DISK_CONFIG_EXISTING = {
 // ─── Factory ──────────────────────────────────────────────────────────────────
 
 function makeExportFile(overrides = {}) {
-  return { ...EF_BASE, ...overrides };
+  return { ...EF_MINIMAL, ...overrides };
 }
 
 function makeDiskConfig(overrides = {}) {
-  return { ...DISK_CONFIG_BASE, ...overrides };
+  return { ...DISK_CONFIG_AFTER_IMPORT, ...overrides };
 }
 
 module.exports = {
-  EF_BASE,
+  EF_MINIMAL,
   EF_EXTERNALLY_MANAGED,
   EF_WITH_TEXT_PARTS,
   EF_SAVE_INPUT,
-  DISK_CONFIG_BASE,
-  DISK_CONFIG_EXISTING,
+  DISK_CONFIG_AFTER_IMPORT,
+  DISK_CONFIG_BEFORE_MERGE,
   makeExportFile,
   makeDiskConfig,
 };
