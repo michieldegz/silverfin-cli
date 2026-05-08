@@ -10,6 +10,10 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 
+const { REC_BASE, DISK_CONFIG_FOR_PUBLISH } = require("../fixtures/reconciliation_texts");
+const { SP_BASE } = require("../fixtures/shared_parts");
+const { apiResponse } = require("../fixtures/api_wrappers");
+
 // ─── Argument-validation tests (spawnSync) ────────────────────────────────────
 
 const CLI = path.resolve(__dirname, "../../bin/cli.js");
@@ -85,23 +89,11 @@ describe("toolkit integration (mocked sfApi)", () => {
   });
 
   describe("fetchReconciliationById", () => {
-    const mockRec = {
-      id: 12345,
-      handle: "my_rec",
-      text: "line1\nline2",
-      text_parts: [],
-      tests: null,
-      name_en: "My Rec",
-      reconciliation_type: "reconciliation",
-      externally_managed: false,
-      published: true,
-    };
-
     it("writes files to disk on success", async () => {
-      SF.readReconciliationTextById.mockResolvedValue({ data: mockRec });
-      await toolkit.fetchReconciliationById("firm", 1001, 12345);
-      expect(fs.existsSync(path.join(tempDir, "reconciliation_texts", "my_rec", "main.liquid"))).toBe(true);
-      expect(consola.success).toHaveBeenCalledWith(expect.stringContaining("my_rec"));
+      SF.readReconciliationTextById.mockResolvedValue(apiResponse(REC_BASE));
+      await toolkit.fetchReconciliationById("firm", 1001, REC_BASE.id);
+      expect(fs.existsSync(path.join(tempDir, "reconciliation_texts", REC_BASE.handle, "main.liquid"))).toBe(true);
+      expect(consola.success).toHaveBeenCalledWith(expect.stringContaining(REC_BASE.handle));
     });
 
     it("calls process.exit(1) when template is not found", async () => {
@@ -113,24 +105,16 @@ describe("toolkit integration (mocked sfApi)", () => {
 
     it("calls process.exit(1) on API error", async () => {
       SF.readReconciliationTextById.mockRejectedValue(new Error("network error"));
-      await toolkit.fetchReconciliationById("firm", 1001, 12345);
+      await toolkit.fetchReconciliationById("firm", 1001, REC_BASE.id);
       expect(process.exit).toHaveBeenCalledWith(1);
     });
   });
 
   describe("fetchSharedPartById", () => {
-    const mockSharedPart = {
-      id: 808,
-      name: "my_shared_part",
-      text: "shared liquid",
-      used_in: [],
-      externally_managed: false,
-    };
-
     it("writes shared part files to disk on success", async () => {
-      SF.readSharedPartById.mockResolvedValue({ data: mockSharedPart });
-      await toolkit.fetchSharedPartById("firm", 1001, 808);
-      expect(fs.existsSync(path.join(tempDir, "shared_parts", "my_shared_part", "my_shared_part.liquid"))).toBe(true);
+      SF.readSharedPartById.mockResolvedValue(apiResponse(SP_BASE));
+      await toolkit.fetchSharedPartById("firm", 1001, SP_BASE.id);
+      expect(fs.existsSync(path.join(tempDir, "shared_parts", SP_BASE.name, `${SP_BASE.name}.liquid`))).toBe(true);
     });
 
     it("calls process.exit(1) when shared part is not found", async () => {
@@ -142,23 +126,27 @@ describe("toolkit integration (mocked sfApi)", () => {
 
   describe("publishReconciliationByHandle", () => {
     it("calls SF.updateReconciliationText with correct params", async () => {
+      const firmId = Object.keys(DISK_CONFIG_FOR_PUBLISH.id)[0];
+      const recId = DISK_CONFIG_FOR_PUBLISH.id[firmId];
+      const recHandle = DISK_CONFIG_FOR_PUBLISH.handle;
+
       // Create the required files
-      const recDir = path.join(tempDir, "reconciliation_texts", "pub_rec");
+      const recDir = path.join(tempDir, "reconciliation_texts", recHandle);
       fs.mkdirSync(recDir, { recursive: true });
       fs.writeFileSync(path.join(recDir, "main.liquid"), "liquid code");
       fs.writeFileSync(
         path.join(recDir, "config.json"),
-        JSON.stringify({ id: { 1001: 555 }, partner_id: {}, handle: "pub_rec", name_en: "Pub Rec", reconciliation_type: "reconciliation", externally_managed: false, text: "main.liquid", text_parts: {} })
+        JSON.stringify(DISK_CONFIG_FOR_PUBLISH)
       );
 
-      SF.readReconciliationTextById.mockResolvedValue({ data: { id: 555, handle: "pub_rec", text_parts: [], reconciliation_type: "reconciliation" } });
-      SF.updateReconciliationText.mockResolvedValue({ data: { id: 555 } });
+      SF.readReconciliationTextById.mockResolvedValue(apiResponse({ id: recId, handle: recHandle, text_parts: [], reconciliation_type: "reconciliation" }));
+      SF.updateReconciliationText.mockResolvedValue(apiResponse({ id: recId }));
 
-      await toolkit.publishReconciliationByHandle("firm", 1001, "pub_rec", "test message");
+      await toolkit.publishReconciliationByHandle("firm", Number(firmId), recHandle, "test message");
       // version_comment is embedded in the template object, not a separate argument
       expect(SF.updateReconciliationText).toHaveBeenCalledWith(
-        "firm", 1001, 555,
-        expect.objectContaining({ handle: "pub_rec", version_comment: "test message" })
+        "firm", Number(firmId), recId,
+        expect.objectContaining({ handle: recHandle, version_comment: "test message" })
       );
     });
   });

@@ -3,6 +3,13 @@ const fsPromises = require("fs").promises;
 const path = require("path");
 const templateUtils = require("../../../lib/utils/templateUtils");
 const { SharedPart } = require("../../../lib/templates/sharedPart");
+const {
+  SP_PARTNER,
+  SP_WITH_USED_IN,
+  DISK_CONFIG_EXISTING,
+  DISK_CONFIG_LEGACY_USED_IN,
+  DISK_CONFIG_FOR_UPDATE_ID,
+} = require("../../fixtures/shared_parts");
 
 jest.mock("../../../lib/utils/templateUtils");
 jest.mock("consola");
@@ -174,62 +181,47 @@ describe("SharedPart", () => {
     });
 
     it("should save with partner type (stores id under partner_id key)", async () => {
-      const template = { id: 999, name: "partner_shared", text: "code", used_in: [], externally_managed: false };
-      await SharedPart.save("partner", "partner_1", template);
-      const configPath = path.join(tempDir, "shared_parts", "partner_shared", "config.json");
+      await SharedPart.save("partner", "partner_1", SP_PARTNER);
+      const configPath = path.join(tempDir, "shared_parts", SP_PARTNER.name, "config.json");
       const saved = JSON.parse(fs.readFileSync(configPath, "utf-8"));
-      expect(saved.partner_id).toEqual({ partner_1: 999 });
+      expect(saved.partner_id).toEqual({ partner_1: SP_PARTNER.id });
       expect(saved.id).toEqual({});
     });
 
     it("should merge with existing config when file already exists", async () => {
-      // Pre-create a config for firm 100
-      const name = "shared_merge";
+      // Pre-create a config for firm 100 using the DISK_CONFIG_EXISTING fixture
+      const name = DISK_CONFIG_EXISTING.name;
       const folder = path.join(tempDir, "shared_parts", name);
       fs.mkdirSync(folder, { recursive: true });
-      const existingConfig = { id: { 100: 111 }, partner_id: {}, name, text: `${name}.liquid`, used_in: [], externally_managed: false };
-      fs.writeFileSync(path.join(folder, "config.json"), JSON.stringify(existingConfig));
+      fs.writeFileSync(path.join(folder, "config.json"), JSON.stringify(DISK_CONFIG_EXISTING));
 
       const template = { id: 222, name, text: "new code", used_in: [], externally_managed: false };
       await SharedPart.save("firm", 200, template);
 
       const saved = JSON.parse(fs.readFileSync(path.join(folder, "config.json"), "utf-8"));
-      expect(saved.id).toEqual({ 100: 111, 200: 222 });
+      expect(saved.id).toEqual({ ...DISK_CONFIG_EXISTING.id, 200: 222 });
     });
 
     it("should write used_in entries after resolving handles via sfApi", async () => {
       SF.readReconciliationTextById.mockResolvedValue({ data: { handle: "rec_handle" } });
-      const template = {
-        id: 808,
-        name: "shared_used",
-        text: "code",
-        used_in: [{ id: 5, type: "reconciliationText" }],
-        externally_managed: false,
-      };
-      await SharedPart.save("firm", 100, template);
-      const configPath = path.join(tempDir, "shared_parts", "shared_used", "config.json");
+      await SharedPart.save("firm", 100, SP_WITH_USED_IN);
+      const configPath = path.join(tempDir, "shared_parts", SP_WITH_USED_IN.name, "config.json");
       const saved = JSON.parse(fs.readFileSync(configPath, "utf-8"));
       expect(saved.used_in).toHaveLength(1);
       expect(saved.used_in[0].handle).toBe("rec_handle");
     });
 
     it("should skip used_in entries with legacy numeric id format", async () => {
-      // Pre-create config with legacy used_in entry (id as number, not object)
-      const name = "shared_legacy";
+      // Pre-create config with legacy used_in entry (id as number, not object) using DISK_CONFIG_LEGACY_USED_IN
+      const name = DISK_CONFIG_LEGACY_USED_IN.name;
       const folder = path.join(tempDir, "shared_parts", name);
       fs.mkdirSync(folder, { recursive: true });
-      const existingConfig = {
-        id: { 100: 808 },
-        partner_id: {},
-        name,
-        text: `${name}.liquid`,
-        used_in: [{ id: 123, handle: "old_rec", type: "reconciliationText" }], // legacy: id is a number
-        externally_managed: false,
-      };
-      fs.writeFileSync(path.join(folder, "config.json"), JSON.stringify(existingConfig));
+      fs.writeFileSync(path.join(folder, "config.json"), JSON.stringify(DISK_CONFIG_LEGACY_USED_IN));
 
-      const template = { id: 808, name, text: "code", used_in: [], externally_managed: false };
-      await SharedPart.save("firm", 100, template);
+      const firmId = Object.keys(DISK_CONFIG_LEGACY_USED_IN.id)[0];
+      const templateId = DISK_CONFIG_LEGACY_USED_IN.id[firmId];
+      const template = { id: templateId, name, text: "code", used_in: [], externally_managed: false };
+      await SharedPart.save("firm", Number(firmId), template);
 
       const saved = JSON.parse(fs.readFileSync(path.join(folder, "config.json"), "utf-8"));
       // Legacy entry should be filtered out
@@ -256,11 +248,10 @@ describe("SharedPart", () => {
     });
 
     it("should read existing config, set id for given type/envId, and write back", () => {
-      const name = "shared_update_id";
+      const name = DISK_CONFIG_FOR_UPDATE_ID.name;
       const folder = path.join(tempDir, "shared_parts", name);
       fs.mkdirSync(folder, { recursive: true });
-      const existingConfig = { id: {}, partner_id: {}, name, text: `${name}.liquid`, used_in: [], externally_managed: false };
-      fs.writeFileSync(path.join(folder, "config.json"), JSON.stringify(existingConfig));
+      fs.writeFileSync(path.join(folder, "config.json"), JSON.stringify(DISK_CONFIG_FOR_UPDATE_ID));
 
       SharedPart.updateTemplateId("firm", 100, name, 9999);
 
