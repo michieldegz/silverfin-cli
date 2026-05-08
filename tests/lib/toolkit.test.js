@@ -8,6 +8,12 @@ const { SharedPart } = require("../../lib/templates/sharedPart");
 const errorUtils = require("../../lib/utils/errorUtils");
 const consola = require("consola");
 
+const { makeReconciliationText } = require("../fixtures/reconciliation_texts");
+const { makeExportFile } = require("../fixtures/export_files");
+const { makeAccountTemplate } = require("../fixtures/account_templates");
+const { makeSharedPart } = require("../fixtures/shared_parts");
+const { apiResponse } = require("../fixtures/api_wrappers");
+
 jest.mock("../../lib/utils/apiUtils", () => ({
   checkRequiredEnvVariables: jest.fn(() => true),
 }));
@@ -36,20 +42,12 @@ describe("Toolkit", () => {
     const mockReconciliationId = "12345";
     const mockMessage = "Test update message";
     const mockHandle = "test_handle";
-    const mockTemplate = {
-      handle: mockHandle,
-      text: "test liquid content",
-      text_parts: [],
-    };
+    const mockTemplate = makeReconciliationText({ handle: mockHandle, text: "test liquid content", text_parts: [] });
 
     it("should successfully update reconciliation by ID when matching template found", async () => {
       fsUtils.findHandleByID.mockReturnValue(mockHandle);
       ReconciliationText.read.mockResolvedValue(mockTemplate);
-      const mockResponse = {
-        data: {
-          handle: mockHandle,
-        },
-      };
+      const mockResponse = apiResponse({ handle: mockHandle });
       SF.updateReconciliationText.mockResolvedValue(mockResponse);
 
       const result = await toolkit.publishReconciliationById(mockType, mockEnvId, mockReconciliationId, mockMessage);
@@ -76,12 +74,7 @@ describe("Toolkit", () => {
       fsUtils.findHandleByID.mockReturnValue(mockHandle);
       ReconciliationText.read.mockResolvedValue(mockTemplate);
 
-      const mockResponse = {
-        data: {
-          handle: mockHandle,
-        },
-      };
-      SF.updateReconciliationText.mockResolvedValue(mockResponse);
+      SF.updateReconciliationText.mockResolvedValue(apiResponse({ handle: mockHandle }));
 
       await toolkit.publishReconciliationById("partner", mockEnvId, mockReconciliationId, mockMessage);
 
@@ -129,12 +122,7 @@ describe("Toolkit", () => {
       fsUtils.findHandleByID.mockReturnValue(mockHandle);
       ReconciliationText.read.mockResolvedValue(mockTemplate);
 
-      const mockResponse = {
-        data: {
-          handle: mockHandle,
-        },
-      };
-      SF.updateReconciliationText.mockResolvedValue(mockResponse);
+      SF.updateReconciliationText.mockResolvedValue(apiResponse({ handle: mockHandle }));
 
       await toolkit.publishReconciliationById(mockType, mockEnvId, mockReconciliationId);
 
@@ -151,20 +139,12 @@ describe("Toolkit", () => {
     const mockExportFileId = "12345";
     const mockMessage = "Test update message";
     const mockHandle = "test_handle";
-    const mockTemplate = {
-      handle: mockHandle,
-      name_nl: "Test Export File",
-      text: "test liquid content",
-    };
+    const mockTemplate = makeExportFile({ handle: mockHandle, text: "test liquid content" });
 
     it("should successfully update export file by ID when matching template found", async () => {
       fsUtils.findHandleByID.mockReturnValue(mockHandle);
       ExportFile.read.mockResolvedValue(mockTemplate);
-      const mockResponse = {
-        data: {
-          name_nl: "Test Export File",
-        },
-      };
+      const mockResponse = apiResponse({ name_nl: mockTemplate.name_nl });
       SF.updateExportFile.mockResolvedValue(mockResponse);
 
       const result = await toolkit.publishExportFileById(mockType, mockEnvId, mockExportFileId, mockMessage);
@@ -224,12 +204,7 @@ describe("Toolkit", () => {
       fsUtils.findHandleByID.mockReturnValue(mockHandle);
       ExportFile.read.mockResolvedValue(mockTemplate);
 
-      const mockResponse = {
-        data: {
-          name_nl: "Test Export File",
-        },
-      };
-      SF.updateExportFile.mockResolvedValue(mockResponse);
+      SF.updateExportFile.mockResolvedValue(apiResponse({ name_nl: mockTemplate.name_nl }));
 
       await toolkit.publishExportFileById(mockType, mockEnvId, mockExportFileId);
 
@@ -246,24 +221,19 @@ describe("Toolkit", () => {
     const mockAccountTemplateId = "12345";
     const mockMessage = "Test update message";
     const mockHandle = "test_handle";
-    const mockTemplate = {
+    const mockTemplate = makeAccountTemplate({
       handle: mockHandle,
-      name_nl: "Test Account Template",
       text: "test liquid content",
       mapping_list_ranges: [
         { type: "firm", env_id: "100", range: "1-10" },
         { type: "partner", env_id: "200", range: "11-20" },
       ],
-    };
+    });
 
     it("should successfully update account template by ID when matching template found", async () => {
       fsUtils.findHandleByID.mockReturnValue(mockHandle);
       AccountTemplate.read.mockResolvedValue(mockTemplate);
-      const mockResponse = {
-        data: {
-          name_nl: "Test Account Template",
-        },
-      };
+      const mockResponse = apiResponse({ name_nl: mockTemplate.name_nl });
       SF.updateAccountTemplate.mockResolvedValue(mockResponse);
 
       const result = await toolkit.publishAccountTemplateById(mockType, mockEnvId, mockAccountTemplateId, mockMessage);
@@ -298,12 +268,7 @@ describe("Toolkit", () => {
         ],
       });
 
-      const mockResponse = {
-        data: {
-          name_nl: "Test Account Template",
-        },
-      };
-      SF.updateAccountTemplate.mockResolvedValue(mockResponse);
+      SF.updateAccountTemplate.mockResolvedValue(apiResponse({ name_nl: mockTemplate.name_nl }));
 
       await toolkit.publishAccountTemplateById("partner", partnerEnvId, mockAccountTemplateId, mockMessage);
 
@@ -352,12 +317,7 @@ describe("Toolkit", () => {
       fsUtils.findHandleByID.mockReturnValue(mockHandle);
       AccountTemplate.read.mockResolvedValue(mockTemplate);
 
-      const mockResponse = {
-        data: {
-          name_nl: "Test Account Template",
-        },
-      };
-      SF.updateAccountTemplate.mockResolvedValue(mockResponse);
+      SF.updateAccountTemplate.mockResolvedValue(apiResponse({ name_nl: mockTemplate.name_nl }));
 
       await toolkit.publishAccountTemplateById(mockType, mockEnvId, mockAccountTemplateId);
 
@@ -375,20 +335,12 @@ describe("Toolkit", () => {
     const mockSharedPartId = "12345";
     const mockMessage = "Test update message";
     const mockHandle = "test_handle";
-    const mockTemplate = {
-      handle: mockHandle,
-      name: "Test Shared Part",
-      text: "test liquid content",
-    };
+    const mockTemplate = makeSharedPart({ handle: mockHandle, text: "test liquid content" });
 
     it("should successfully update shared part by ID when matching template found", async () => {
       fsUtils.findHandleByID.mockReturnValue(mockHandle);
       SharedPart.read.mockResolvedValue(mockTemplate);
-      const mockResponse = {
-        data: {
-          name: "Test Shared Part",
-        },
-      };
+      const mockResponse = apiResponse({ name: mockTemplate.name });
       SF.updateSharedPart.mockResolvedValue(mockResponse);
 
       const result = await toolkit.publishSharedPartById(mockType, mockEnvId, mockSharedPartId, mockMessage);
@@ -448,12 +400,7 @@ describe("Toolkit", () => {
       fsUtils.findHandleByID.mockReturnValue(mockHandle);
       SharedPart.read.mockResolvedValue(mockTemplate);
 
-      const mockResponse = {
-        data: {
-          name: "Test Shared Part",
-        },
-      };
-      SF.updateSharedPart.mockResolvedValue(mockResponse);
+      SF.updateSharedPart.mockResolvedValue(apiResponse({ name: mockTemplate.name }));
 
       await toolkit.publishSharedPartById(mockType, mockEnvId, mockSharedPartId);
 

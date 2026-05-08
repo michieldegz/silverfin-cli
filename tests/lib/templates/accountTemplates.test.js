@@ -3,29 +3,19 @@ const fsPromises = require("fs").promises;
 const path = require("path");
 const templateUtils = require("../../../lib/utils/templateUtils");
 const { AccountTemplate } = require("../../../lib/templates/accountTemplate");
+const {
+  ACCOUNT_TEMPLATE_SAVE_INPUT,
+  CONFIG_BEFORE_MERGE,
+  CONFIG_FOR_READ,
+} = require("../../fixtures/account_templates");
 
 jest.mock("../../../lib/utils/templateUtils");
 jest.mock("consola");
 
 describe("AccountTemplate", () => {
   describe("save", () => {
-    const testContent = "# Add your Liquid Tests here";
+    const template = ACCOUNT_TEMPLATE_SAVE_INPUT;
     const textParts = { part_1: "Part 1: updated content" };
-    const template = {
-      name_nl: "name_nl",
-      name_en: "",
-      name_fr: "",
-      id: 808080,
-      text: "Main liquid content",
-      text_parts: [
-        { name: "part_1", content: "Part 1: updated content" },
-        { name: "", content: "" },
-      ],
-      tests: testContent,
-      externally_managed: true,
-      hide_code: true,
-      mapping_list_ranges: [],
-    };
     const name_nl = template.name_nl;
     const configToWrite = {
       id: {
@@ -50,22 +40,7 @@ describe("AccountTemplate", () => {
       published: true,
       test_firm_id: null,
     };
-    const existingConfig = {
-      id: { 200: 505050 },
-      name_nl: "old_name_nl",
-      text: "main.liquid",
-      text_parts: {
-        old_part: "text_parts/old_part.liquid",
-        part_1: "text_parts/part_1.liquid",
-      },
-      name_fr: "",
-      name_en: "",
-      account_range: null,
-      mapping_list_ranges: [],
-      hide_code: false,
-      published: true,
-      test_firm_id: null,
-    };
+    const existingConfig = CONFIG_BEFORE_MERGE;
 
     const repoRoot = path.resolve(__dirname, "../../..");
     let tempDir;
@@ -281,21 +256,7 @@ describe("AccountTemplate", () => {
     const testLiquidPath = path.join(templateDir, "tests", `${name}_liquid_test.yml`);
     const part1LiquidPath = path.join(templateDir, "text_parts", "part_1.liquid");
 
-    const configContent = {
-      id: { 100: 808080 },
-      name_en: "test_account_template",
-      name_nl: "test_account_template",
-      name_fr: "test_account_template",
-      text: "main.liquid",
-      text_parts: {
-        part_1: "text_parts/part_1.liquid",
-      },
-      externally_managed: true,
-      account_range: null,
-      mapping_list_ranges: [],
-      hide_code: true,
-      published: true,
-    };
+    const configContent = CONFIG_FOR_READ;
 
     beforeEach(() => {
       if (!fs.existsSync(tempDir)) {

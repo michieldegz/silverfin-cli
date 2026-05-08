@@ -3,6 +3,10 @@ const fsPromises = require("fs").promises;
 const path = require("path");
 const templateUtils = require("../../../lib/utils/templateUtils");
 const { ExportFile } = require("../../../lib/templates/exportFile");
+const {
+  EXPORT_FILE_SAVE_INPUT,
+  CONFIG_BEFORE_MERGE,
+} = require("../../fixtures/export_files");
 
 jest.mock("../../../lib/utils/templateUtils");
 jest.mock("consola");
@@ -10,17 +14,7 @@ jest.mock("consola");
 describe("ExportFile", () => {
   describe("save", () => {
     const textParts = { part_1: "Part 1: updated content" };
-    // Data coming from the API (stored on partner/firm)
-    const template = {
-      name_nl: "example_name_nl",
-      id: 808080,
-      text: "Main liquid content",
-      text_parts: [{ name: "part_1", content: "Part 1: updated content" }],
-      externally_managed: true,
-      file_name: "export_file.sxbrl",
-      name_en: "example_name_nl",
-      name_fr: "example_name_nl",
-    };
+    const template = EXPORT_FILE_SAVE_INPUT;
     const name_nl = template.name_nl;
     // Expected config to be written after processing (import command)
     const configToWrite = {
@@ -43,28 +37,7 @@ describe("ExportFile", () => {
         part_1: "text_parts/part_1.liquid",
       },
     };
-    // Local config file
-    const existingConfig = {
-      id: { 200: 505050 },
-      partner_id: {},
-      externally_managed: false,
-      name_nl: "example_name_nl",
-      name_fr: "old_name_fr",
-      name_en: "old_name_en",
-      description_en: "",
-      description_nl: "",
-      description_fr: "",
-      file_name: "old_file_name.sxbrl",
-      text: "main.liquid",
-      hide_code: true,
-      published: true,
-      download_warning: "",
-      encoding: "UTF-8",
-      text_parts: {
-        old_part: "text_parts/old_part.liquid",
-        part_1: "text_parts/part_1.liquid",
-      },
-    };
+    const existingConfig = CONFIG_BEFORE_MERGE;
 
     const repoRoot = path.resolve(__dirname, "../../..");
     let tempDir;
