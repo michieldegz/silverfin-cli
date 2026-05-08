@@ -8,7 +8,7 @@
 // ─── API response objects ─────────────────────────────────────────────────────
 
 /** Minimal valid shared part — happy-path baseline. */
-const SP_MINIMAL = {
+const SHARED_PART_MINIMAL = {
   id: 808080,
   name: "example_shared_part_name",
   text: "Shared part liquid content",
@@ -17,24 +17,24 @@ const SP_MINIMAL = {
 };
 
 /** Externally managed — used for stats and lock-down scenarios. */
-const SP_EXTERNALLY_MANAGED = {
-  ...SP_MINIMAL,
+const SHARED_PART_EXTERNALLY_MANAGED = {
+  ...SHARED_PART_MINIMAL,
   id: 11111,
   name: "ext_managed_shared",
   externally_managed: true,
 };
 
 /** Shared part stored under a partner environment. */
-const SP_PARTNER = {
-  ...SP_MINIMAL,
+const SHARED_PART_PARTNER = {
+  ...SHARED_PART_MINIMAL,
   id: 99999,
   name: "partner_shared",
   externally_managed: false,
 };
 
 /** Shared part that references a reconciliation via used_in. */
-const SP_WITH_USED_IN = {
-  ...SP_MINIMAL,
+const SHARED_PART_WITH_USED_IN = {
+  ...SHARED_PART_MINIMAL,
   id: 80808,
   name: "shared_used",
   used_in: [{ id: { 100: 5 }, type: "reconciliationText" }],
@@ -43,7 +43,7 @@ const SP_WITH_USED_IN = {
 // ─── Disk config objects ──────────────────────────────────────────────────────
 
 /** Baseline disk config after a firm-100 import. */
-const DISK_CONFIG_AFTER_IMPORT = {
+const CONFIG_AFTER_IMPORT = {
   id: { 100: 808080 },
   partner_id: {},
   name: "example_shared_part_name",
@@ -53,7 +53,7 @@ const DISK_CONFIG_AFTER_IMPORT = {
 };
 
 /** Config after a partner import — id is empty, partner_id is set. */
-const DISK_CONFIG_PARTNER = {
+const CONFIG_PARTNER = {
   id: {},
   partner_id: { partner_1: 99999 },
   name: "partner_shared",
@@ -63,7 +63,7 @@ const DISK_CONFIG_PARTNER = {
 };
 
 /** Config already on disk for firm 100 — merge scenario (firm 200 is added). */
-const DISK_CONFIG_BEFORE_MERGE = {
+const CONFIG_BEFORE_MERGE = {
   id: { 100: 111 },
   partner_id: {},
   name: "shared_merge",
@@ -73,7 +73,7 @@ const DISK_CONFIG_BEFORE_MERGE = {
 };
 
 /** Config with a legacy used_in entry (numeric id) — should be filtered out on save. */
-const DISK_CONFIG_LEGACY_USED_IN = {
+const CONFIG_LEGACY_USED_IN = {
   id: { 100: 808 },
   partner_id: {},
   name: "shared_legacy",
@@ -83,7 +83,7 @@ const DISK_CONFIG_LEGACY_USED_IN = {
 };
 
 /** Blank config ready for updateTemplateId. */
-const DISK_CONFIG_FOR_UPDATE_ID = {
+const CONFIG_FOR_UPDATE_ID = {
   id: {},
   partner_id: {},
   name: "shared_update_id",
@@ -95,23 +95,23 @@ const DISK_CONFIG_FOR_UPDATE_ID = {
 // ─── Factory ──────────────────────────────────────────────────────────────────
 
 function makeSharedPart(overrides = {}) {
-  return { ...SP_MINIMAL, ...overrides };
+  return { ...SHARED_PART_MINIMAL, ...overrides };
 }
 
-function makeDiskConfig(overrides = {}) {
-  return { ...DISK_CONFIG_AFTER_IMPORT, ...overrides };
+function makeConfig(overrides = {}) {
+  return { ...CONFIG_AFTER_IMPORT, ...overrides };
 }
 
 module.exports = {
-  SP_MINIMAL,
-  SP_EXTERNALLY_MANAGED,
-  SP_PARTNER,
-  SP_WITH_USED_IN,
-  DISK_CONFIG_AFTER_IMPORT,
-  DISK_CONFIG_PARTNER,
-  DISK_CONFIG_BEFORE_MERGE,
-  DISK_CONFIG_LEGACY_USED_IN,
-  DISK_CONFIG_FOR_UPDATE_ID,
+  SHARED_PART_MINIMAL,
+  SHARED_PART_EXTERNALLY_MANAGED,
+  SHARED_PART_PARTNER,
+  SHARED_PART_WITH_USED_IN,
+  CONFIG_AFTER_IMPORT,
+  CONFIG_PARTNER,
+  CONFIG_BEFORE_MERGE,
+  CONFIG_LEGACY_USED_IN,
+  CONFIG_FOR_UPDATE_ID,
   makeSharedPart,
-  makeDiskConfig,
+  makeConfig,
 };

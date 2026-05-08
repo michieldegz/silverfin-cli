@@ -4,8 +4,8 @@ const path = require("path");
 const templateUtils = require("../../../lib/utils/templateUtils");
 const { ExportFile } = require("../../../lib/templates/exportFile");
 const {
-  EF_SAVE_INPUT,
-  DISK_CONFIG_BEFORE_MERGE,
+  EXPORT_FILE_SAVE_INPUT,
+  CONFIG_BEFORE_MERGE,
 } = require("../../fixtures/export_files");
 
 jest.mock("../../../lib/utils/templateUtils");
@@ -14,7 +14,7 @@ jest.mock("consola");
 describe("ExportFile", () => {
   describe("save", () => {
     const textParts = { part_1: "Part 1: updated content" };
-    const template = EF_SAVE_INPUT;
+    const template = EXPORT_FILE_SAVE_INPUT;
     const name_nl = template.name_nl;
     // Expected config to be written after processing (import command)
     const configToWrite = {
@@ -37,7 +37,7 @@ describe("ExportFile", () => {
         part_1: "text_parts/part_1.liquid",
       },
     };
-    const existingConfig = DISK_CONFIG_BEFORE_MERGE;
+    const existingConfig = CONFIG_BEFORE_MERGE;
 
     const repoRoot = path.resolve(__dirname, "../../..");
     let tempDir;

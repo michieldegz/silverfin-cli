@@ -4,9 +4,9 @@ const path = require("path");
 const templateUtils = require("../../../lib/utils/templateUtils");
 const { AccountTemplate } = require("../../../lib/templates/accountTemplate");
 const {
-  AT_SAVE_INPUT,
-  DISK_CONFIG_BEFORE_MERGE,
-  DISK_CONFIG_FOR_READ,
+  ACCOUNT_TEMPLATE_SAVE_INPUT,
+  CONFIG_BEFORE_MERGE,
+  CONFIG_FOR_READ,
 } = require("../../fixtures/account_templates");
 
 jest.mock("../../../lib/utils/templateUtils");
@@ -14,7 +14,7 @@ jest.mock("consola");
 
 describe("AccountTemplate", () => {
   describe("save", () => {
-    const template = AT_SAVE_INPUT;
+    const template = ACCOUNT_TEMPLATE_SAVE_INPUT;
     const textParts = { part_1: "Part 1: updated content" };
     const name_nl = template.name_nl;
     const configToWrite = {
@@ -40,7 +40,7 @@ describe("AccountTemplate", () => {
       published: true,
       test_firm_id: null,
     };
-    const existingConfig = DISK_CONFIG_BEFORE_MERGE;
+    const existingConfig = CONFIG_BEFORE_MERGE;
 
     const repoRoot = path.resolve(__dirname, "../../..");
     let tempDir;
@@ -256,7 +256,7 @@ describe("AccountTemplate", () => {
     const testLiquidPath = path.join(templateDir, "tests", `${name}_liquid_test.yml`);
     const part1LiquidPath = path.join(templateDir, "text_parts", "part_1.liquid");
 
-    const configContent = DISK_CONFIG_FOR_READ;
+    const configContent = CONFIG_FOR_READ;
 
     beforeEach(() => {
       if (!fs.existsSync(tempDir)) {

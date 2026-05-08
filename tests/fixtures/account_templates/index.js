@@ -8,7 +8,7 @@
 // ─── API response objects ─────────────────────────────────────────────────────
 
 /** Minimal valid account template — happy-path baseline. */
-const AT_MINIMAL = {
+const ACCOUNT_TEMPLATE_MINIMAL = {
   id: 808080,
   name_nl: "name_nl",
   name_en: "",
@@ -28,8 +28,8 @@ const AT_MINIMAL = {
 };
 
 /** Externally managed account template. */
-const AT_EXTERNALLY_MANAGED = {
-  ...AT_MINIMAL,
+const ACCOUNT_TEMPLATE_EXTERNALLY_MANAGED = {
+  ...ACCOUNT_TEMPLATE_MINIMAL,
   id: 11111,
   name_nl: "ext_managed_account",
   externally_managed: true,
@@ -37,8 +37,8 @@ const AT_EXTERNALLY_MANAGED = {
 };
 
 /** Template with mapping_list_ranges for both firm and partner contexts. */
-const AT_WITH_MAPPING_LIST_RANGES = {
-  ...AT_MINIMAL,
+const ACCOUNT_TEMPLATE_WITH_MAPPING_LIST_RANGES = {
+  ...ACCOUNT_TEMPLATE_MINIMAL,
   id: 33333,
   name_nl: "mapped_account",
   mapping_list_ranges: [
@@ -48,8 +48,8 @@ const AT_WITH_MAPPING_LIST_RANGES = {
 };
 
 /** All locale fields populated — tests locale preservation on re-import. */
-const AT_MULTI_LOCALE = {
-  ...AT_MINIMAL,
+const ACCOUNT_TEMPLATE_MULTI_LOCALE = {
+  ...ACCOUNT_TEMPLATE_MINIMAL,
   id: 44444,
   name_nl: "multi_locale_account",
   name_en: "test_account_template",
@@ -59,7 +59,7 @@ const AT_MULTI_LOCALE = {
 // ─── Minimal API inputs for AccountTemplate unit tests ───────────────────────
 
 /** Minimal API response used as input to AccountTemplate.save() unit tests. */
-const AT_SAVE_INPUT = {
+const ACCOUNT_TEMPLATE_SAVE_INPUT = {
   name_nl: "name_nl",
   name_en: "",
   name_fr: "",
@@ -78,7 +78,7 @@ const AT_SAVE_INPUT = {
 // ─── Disk config objects ──────────────────────────────────────────────────────
 
 /** Baseline disk config after a firm-100 import. */
-const DISK_CONFIG_AFTER_IMPORT = {
+const CONFIG_AFTER_IMPORT = {
   id: { 100: 808080 },
   partner_id: {},
   externally_managed: false,
@@ -99,7 +99,7 @@ const DISK_CONFIG_AFTER_IMPORT = {
 };
 
 /** Config already on disk for firm 200 — merge scenario. */
-const DISK_CONFIG_PRIOR_IMPORT = {
+const CONFIG_PRIOR_IMPORT = {
   id: { 200: 505050 },
   name_nl: "old_name_nl",
   text: "main.liquid",
@@ -117,7 +117,7 @@ const DISK_CONFIG_PRIOR_IMPORT = {
 };
 
 /** Existing config on disk before a second save (merge scenario unit test). */
-const DISK_CONFIG_BEFORE_MERGE = {
+const CONFIG_BEFORE_MERGE = {
   id: { 200: 505050 },
   name_nl: "old_name_nl",
   text: "main.liquid",
@@ -135,7 +135,7 @@ const DISK_CONFIG_BEFORE_MERGE = {
 };
 
 /** Config written to disk — starting state for AccountTemplate.read() unit tests. */
-const DISK_CONFIG_FOR_READ = {
+const CONFIG_FOR_READ = {
   id: { 100: 808080 },
   name_en: "test_account_template",
   name_nl: "test_account_template",
@@ -150,8 +150,8 @@ const DISK_CONFIG_FOR_READ = {
 };
 
 /** Config with all locale fields — tests locale preservation on read. */
-const DISK_CONFIG_MULTI_LOCALE = {
-  ...DISK_CONFIG_AFTER_IMPORT,
+const CONFIG_MULTI_LOCALE = {
+  ...CONFIG_AFTER_IMPORT,
   id: { 100: 44444 },
   name_nl: "multi_locale_account",
   name_en: "test_account_template",
@@ -161,28 +161,28 @@ const DISK_CONFIG_MULTI_LOCALE = {
 // ─── Factory ──────────────────────────────────────────────────────────────────
 
 function makeAccountTemplate(overrides = {}) {
-  return { ...AT_MINIMAL, ...overrides };
+  return { ...ACCOUNT_TEMPLATE_MINIMAL, ...overrides };
 }
 
-function makeDiskConfig(overrides = {}) {
-  return { ...DISK_CONFIG_AFTER_IMPORT, ...overrides };
+function makeConfig(overrides = {}) {
+  return { ...CONFIG_AFTER_IMPORT, ...overrides };
 }
 
 module.exports = {
   // Full API response objects
-  AT_MINIMAL,
-  AT_EXTERNALLY_MANAGED,
-  AT_WITH_MAPPING_LIST_RANGES,
-  AT_MULTI_LOCALE,
+  ACCOUNT_TEMPLATE_MINIMAL,
+  ACCOUNT_TEMPLATE_EXTERNALLY_MANAGED,
+  ACCOUNT_TEMPLATE_WITH_MAPPING_LIST_RANGES,
+  ACCOUNT_TEMPLATE_MULTI_LOCALE,
   // Minimal unit-test inputs
-  AT_SAVE_INPUT,
+  ACCOUNT_TEMPLATE_SAVE_INPUT,
   // Disk config objects
-  DISK_CONFIG_AFTER_IMPORT,
-  DISK_CONFIG_PRIOR_IMPORT,
-  DISK_CONFIG_MULTI_LOCALE,
-  DISK_CONFIG_BEFORE_MERGE,
-  DISK_CONFIG_FOR_READ,
+  CONFIG_AFTER_IMPORT,
+  CONFIG_PRIOR_IMPORT,
+  CONFIG_MULTI_LOCALE,
+  CONFIG_BEFORE_MERGE,
+  CONFIG_FOR_READ,
   // Factories
   makeAccountTemplate,
-  makeDiskConfig,
+  makeConfig,
 };

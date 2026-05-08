@@ -8,7 +8,7 @@
 // ─── API response objects ─────────────────────────────────────────────────────
 
 /** Minimal valid export file — happy-path baseline. */
-const EF_MINIMAL = {
+const EXPORT_FILE_MINIMAL = {
   id: 808080,
   name_nl: "example_name_nl",
   name_en: "example_name_en",
@@ -27,8 +27,8 @@ const EF_MINIMAL = {
 };
 
 /** Externally managed export file. */
-const EF_EXTERNALLY_MANAGED = {
-  ...EF_MINIMAL,
+const EXPORT_FILE_EXTERNALLY_MANAGED = {
+  ...EXPORT_FILE_MINIMAL,
   id: 11111,
   name_nl: "ext_managed_export",
   name_en: "ext_managed_export",
@@ -39,8 +39,8 @@ const EF_EXTERNALLY_MANAGED = {
 };
 
 /** Export file with multiple text parts. */
-const EF_WITH_TEXT_PARTS = {
-  ...EF_MINIMAL,
+const EXPORT_FILE_WITH_TEXT_PARTS = {
+  ...EXPORT_FILE_MINIMAL,
   id: 22222,
   name_nl: "multi_part_export",
   name_en: "multi_part_export",
@@ -55,7 +55,7 @@ const EF_WITH_TEXT_PARTS = {
 // ─── Minimal API inputs for ExportFile unit tests ────────────────────────────
 
 /** Minimal API response used as input to ExportFile.save() unit tests. */
-const EF_SAVE_INPUT = {
+const EXPORT_FILE_SAVE_INPUT = {
   name_nl: "example_name_nl",
   id: 808080,
   text: "Main liquid content",
@@ -69,7 +69,7 @@ const EF_SAVE_INPUT = {
 // ─── Disk config objects ──────────────────────────────────────────────────────
 
 /** Baseline disk config after a firm-100 import. */
-const DISK_CONFIG_AFTER_IMPORT = {
+const CONFIG_AFTER_IMPORT = {
   id: { 100: 808080 },
   partner_id: {},
   externally_managed: false,
@@ -89,7 +89,7 @@ const DISK_CONFIG_AFTER_IMPORT = {
 };
 
 /** Config already on disk for firm 200 — merge scenario. */
-const DISK_CONFIG_BEFORE_MERGE = {
+const CONFIG_BEFORE_MERGE = {
   id: { 200: 505050 },
   partner_id: {},
   externally_managed: false,
@@ -114,20 +114,20 @@ const DISK_CONFIG_BEFORE_MERGE = {
 // ─── Factory ──────────────────────────────────────────────────────────────────
 
 function makeExportFile(overrides = {}) {
-  return { ...EF_MINIMAL, ...overrides };
+  return { ...EXPORT_FILE_MINIMAL, ...overrides };
 }
 
-function makeDiskConfig(overrides = {}) {
-  return { ...DISK_CONFIG_AFTER_IMPORT, ...overrides };
+function makeConfig(overrides = {}) {
+  return { ...CONFIG_AFTER_IMPORT, ...overrides };
 }
 
 module.exports = {
-  EF_MINIMAL,
-  EF_EXTERNALLY_MANAGED,
-  EF_WITH_TEXT_PARTS,
-  EF_SAVE_INPUT,
-  DISK_CONFIG_AFTER_IMPORT,
-  DISK_CONFIG_BEFORE_MERGE,
+  EXPORT_FILE_MINIMAL,
+  EXPORT_FILE_EXTERNALLY_MANAGED,
+  EXPORT_FILE_WITH_TEXT_PARTS,
+  EXPORT_FILE_SAVE_INPUT,
+  CONFIG_AFTER_IMPORT,
+  CONFIG_BEFORE_MERGE,
   makeExportFile,
-  makeDiskConfig,
+  makeConfig,
 };

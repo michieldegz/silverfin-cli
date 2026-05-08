@@ -8,7 +8,7 @@ const { SharedPart } = require("../../lib/templates/sharedPart");
 const errorUtils = require("../../lib/utils/errorUtils");
 const consola = require("consola");
 
-const { makeReconciliation } = require("../fixtures/reconciliation_texts");
+const { makeReconciliationText } = require("../fixtures/reconciliation_texts");
 const { makeExportFile } = require("../fixtures/export_files");
 const { makeAccountTemplate } = require("../fixtures/account_templates");
 const { makeSharedPart } = require("../fixtures/shared_parts");
@@ -42,7 +42,7 @@ describe("Toolkit", () => {
     const mockReconciliationId = "12345";
     const mockMessage = "Test update message";
     const mockHandle = "test_handle";
-    const mockTemplate = makeReconciliation({ handle: mockHandle, text: "test liquid content", text_parts: [] });
+    const mockTemplate = makeReconciliationText({ handle: mockHandle, text: "test liquid content", text_parts: [] });
 
     it("should successfully update reconciliation by ID when matching template found", async () => {
       fsUtils.findHandleByID.mockReturnValue(mockHandle);

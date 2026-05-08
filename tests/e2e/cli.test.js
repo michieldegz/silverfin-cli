@@ -10,8 +10,8 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 
-const { REC_MINIMAL, DISK_CONFIG_FOR_PUBLISH } = require("../fixtures/reconciliation_texts");
-const { SP_MINIMAL } = require("../fixtures/shared_parts");
+const { RECONCILIATION_MINIMAL, CONFIG_FOR_PUBLISH } = require("../fixtures/reconciliation_texts");
+const { SHARED_PART_MINIMAL } = require("../fixtures/shared_parts");
 const { apiResponse } = require("../fixtures/api_wrappers");
 
 // ─── Argument-validation tests (spawnSync) ────────────────────────────────────
@@ -90,10 +90,10 @@ describe("toolkit integration (mocked sfApi)", () => {
 
   describe("fetchReconciliationById", () => {
     it("writes files to disk on success", async () => {
-      SF.readReconciliationTextById.mockResolvedValue(apiResponse(REC_MINIMAL));
-      await toolkit.fetchReconciliationById("firm", 1001, REC_MINIMAL.id);
-      expect(fs.existsSync(path.join(tempDir, "reconciliation_texts", REC_MINIMAL.handle, "main.liquid"))).toBe(true);
-      expect(consola.success).toHaveBeenCalledWith(expect.stringContaining(REC_MINIMAL.handle));
+      SF.readReconciliationTextById.mockResolvedValue(apiResponse(RECONCILIATION_MINIMAL));
+      await toolkit.fetchReconciliationById("firm", 1001, RECONCILIATION_MINIMAL.id);
+      expect(fs.existsSync(path.join(tempDir, "reconciliation_texts", RECONCILIATION_MINIMAL.handle, "main.liquid"))).toBe(true);
+      expect(consola.success).toHaveBeenCalledWith(expect.stringContaining(RECONCILIATION_MINIMAL.handle));
     });
 
     it("calls process.exit(1) when template is not found", async () => {
@@ -105,16 +105,16 @@ describe("toolkit integration (mocked sfApi)", () => {
 
     it("calls process.exit(1) on API error", async () => {
       SF.readReconciliationTextById.mockRejectedValue(new Error("network error"));
-      await toolkit.fetchReconciliationById("firm", 1001, REC_MINIMAL.id);
+      await toolkit.fetchReconciliationById("firm", 1001, RECONCILIATION_MINIMAL.id);
       expect(process.exit).toHaveBeenCalledWith(1);
     });
   });
 
   describe("fetchSharedPartById", () => {
     it("writes shared part files to disk on success", async () => {
-      SF.readSharedPartById.mockResolvedValue(apiResponse(SP_MINIMAL));
-      await toolkit.fetchSharedPartById("firm", 1001, SP_MINIMAL.id);
-      expect(fs.existsSync(path.join(tempDir, "shared_parts", SP_MINIMAL.name, `${SP_MINIMAL.name}.liquid`))).toBe(true);
+      SF.readSharedPartById.mockResolvedValue(apiResponse(SHARED_PART_MINIMAL));
+      await toolkit.fetchSharedPartById("firm", 1001, SHARED_PART_MINIMAL.id);
+      expect(fs.existsSync(path.join(tempDir, "shared_parts", SHARED_PART_MINIMAL.name, `${SHARED_PART_MINIMAL.name}.liquid`))).toBe(true);
     });
 
     it("calls process.exit(1) when shared part is not found", async () => {
@@ -126,9 +126,9 @@ describe("toolkit integration (mocked sfApi)", () => {
 
   describe("publishReconciliationByHandle", () => {
     it("calls SF.updateReconciliationText with correct params", async () => {
-      const firmId = Object.keys(DISK_CONFIG_FOR_PUBLISH.id)[0];
-      const recId = DISK_CONFIG_FOR_PUBLISH.id[firmId];
-      const recHandle = DISK_CONFIG_FOR_PUBLISH.handle;
+      const firmId = Object.keys(CONFIG_FOR_PUBLISH.id)[0];
+      const recId = CONFIG_FOR_PUBLISH.id[firmId];
+      const recHandle = CONFIG_FOR_PUBLISH.handle;
 
       // Create the required files
       const recDir = path.join(tempDir, "reconciliation_texts", recHandle);
@@ -136,7 +136,7 @@ describe("toolkit integration (mocked sfApi)", () => {
       fs.writeFileSync(path.join(recDir, "main.liquid"), "liquid code");
       fs.writeFileSync(
         path.join(recDir, "config.json"),
-        JSON.stringify(DISK_CONFIG_FOR_PUBLISH)
+        JSON.stringify(CONFIG_FOR_PUBLISH)
       );
 
       SF.readReconciliationTextById.mockResolvedValue(apiResponse({ id: recId, handle: recHandle, text_parts: [], reconciliation_type: "reconciliation" }));

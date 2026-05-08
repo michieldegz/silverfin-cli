@@ -4,9 +4,9 @@ const path = require("path");
 const templateUtils = require("../../../lib/utils/templateUtils");
 const { ReconciliationText } = require("../../../lib/templates/reconciliationText");
 const {
-  REC_SAVE_INPUT,
-  DISK_CONFIG_BEFORE_MERGE,
-  DISK_CONFIG_FOR_READ,
+  RECONCILIATION_SAVE_INPUT,
+  CONFIG_BEFORE_MERGE,
+  CONFIG_FOR_READ,
 } = require("../../fixtures/reconciliation_texts");
 
 jest.mock("../../../lib/utils/templateUtils");
@@ -14,7 +14,7 @@ jest.mock("consola");
 
 describe("ReconciliationText", () => {
   describe("save", () => {
-    const template = REC_SAVE_INPUT;
+    const template = RECONCILIATION_SAVE_INPUT;
     const textParts = { part_1: "Part 1: updated content" };
     const handle = template.handle;
     const configToWrite = {
@@ -46,7 +46,7 @@ describe("ReconciliationText", () => {
       virtual_account_number: "",
       test_firm_id: null,
     };
-    const existingConfig = DISK_CONFIG_BEFORE_MERGE;
+    const existingConfig = CONFIG_BEFORE_MERGE;
 
     const repoRoot = path.resolve(__dirname, "../../..");
     let tempDir;
@@ -326,7 +326,7 @@ describe("ReconciliationText", () => {
     const testLiquidPath = path.join(templateDir, "tests", `${handle}_liquid_test.yml`);
     const part1LiquidPath = path.join(templateDir, "text_parts", "part_1.liquid");
 
-    const configContent = DISK_CONFIG_FOR_READ;
+    const configContent = CONFIG_FOR_READ;
 
     beforeEach(() => {
       if (!fs.existsSync(tempDir)) {
