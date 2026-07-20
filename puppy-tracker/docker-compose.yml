@@ -1,0 +1,33 @@
+services:
+  puppy:
+    build: .
+    # Or, once you've built/pushed an image: image: puppy-tracker:latest
+    container_name: puppy-tracker
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # Required by adapter-node so form POSTs pass CSRF checks.
+      # Set this to the exact URL you browse to.
+      - ORIGIN=http://puppy.local:3000
+      - BODY_SIZE_LIMIT=5M
+      - TZ=Europe/Brussels
+      - DATABASE_PATH=/data/puppy.db
+      # Generate: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+      - SESSION_SECRET=${SESSION_SECRET:?set SESSION_SECRET in a .env file}
+      # Default PIN for the two seeded users on first run. Change it in-app after.
+      - SEED_PIN=${SEED_PIN:-1234}
+    volumes:
+      - ./data:/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
